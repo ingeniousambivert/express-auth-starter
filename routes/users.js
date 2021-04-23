@@ -16,8 +16,8 @@ router.post("/signin", authenticateUser);
 
 router.get("/:id", secureRoute, getUser);
 
-router.post("/update/:id", secureRoute, updateUser);
+router.patch("/update/:id", secureRoute, updateUser);
 
-router.post("/delete/:id", secureRoute, deleteUser);
+router.delete("/delete/:id", secureRoute, deleteUser);
 
 module.exports = router;
