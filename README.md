@@ -49,11 +49,11 @@ DEBUG=express-auth-starter:* npm run dev
 
 ## Routes
 
-- **GET** `/users/:id`
-
+**GET** `/users/:id`
 _request_ :
 
 ```js
+//Pass the user id in query params
 {
   Authorization: "Bearer XXX";
 }
@@ -63,47 +63,110 @@ _reponse_ :
 
 ```js
 {
-  "_id",
-  "firstname",
-  "lastname",
-  "email",
+    "_id": "6082d3318b2a795b31c07965",
+    "firstname": "test",
+    "lastname": "test",
+    "email": "test@test.com",
+    "createdAt": "2021-04-23T14:01:21.654Z",
+    "updatedAt": "2021-04-23T14:01:21.654Z",
+    "__v": 0
 }
 ```
 
-- **GET** `/generator/banks` : returns an array of strings with bank names.
+**POST** `/users/signup`
 
-- **POST** `/generator/countries` : Takes in the following type of body parameters(not case-sensitive)
+_request_ :
 
-  ```js
-  {
-    "bank":"HONG KONG AND SHANGHAI BANKING CORP., LTD."
-  }
-  ```
+```js
+{
+    "firstname":"Monarch",
+    "lastname":"Maisuriya",
+    "email":"monarch@maisuriya.com",
+    "password":"maisuriya"
+}
+```
 
-  returns an array of strings with country names.
+_reponse_ :
 
-- **POST** `/generator/generate` : Takes in the following type of body parameters(not case-sensitive)
+```js
+{
+    "_id": "6082d3318b2a795b31c07965",
+    "firstname":"Monarch",
+    "lastname":"Maisuriya",
+    "email":"monarch@maisuriya.com",
+    "password": "$2b$10$lW3lQ6SBhyM2g7BtPRw0suYLt7ohtMYI9Nr3MyxdnQ/Q/mGB/s61O",
+    "createdAt": "2021-04-23T14:01:21.654Z",
+    "updatedAt": "2021-04-23T14:01:21.654Z",
+    "__v": 0
+}
+```
 
-  ```js
-  {
-    "bank":"CITIBANK",
-    "country":"India",
-    "brand":"MasterCard",
-    "quantity":10
-  }
-  ```
+**POST** `/users/signin`
 
-  returns a single card object or an array of objects.
+_request_ :
 
-- **POST** `/generator/verify` : Takes in the following type of body parameters
+```js
+{
+    "email":"monarch@maisuriya.com",
+    "password":"maisuriya"
+}
+```
 
-  ```js
-  {
-    "number":2511058888886260
-  }
-  ```
+_reponse_ :
 
-  returns a string message with VALID or NOT VALID keywords and a boolean.
+```js
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJleHByZXNzLWF1dGgiLCJzdWIiOiI2MDgyZDMzMThiMmE3OTViMzFjMDc5NjUiLCJpc3NhdCI6MTYxOTE4NjYwODExOCwiaWF0IjoxNjE5MTg2NjA4LCJleHAiOjE2MTkyNzMwMDh9.G4QpGOww7tRIyIUB38j07uR0p8ucvzww-R8SvVEowQs",
+    "_id": "6082d3318b2a795b31c07965"
+}
+```
+
+**PATCH** `/users/update/:id`
+
+_request_ :
+
+```js
+//Pass the user id in query params
+{
+  Authorization: "Bearer XXX";
+}
+
+body: {
+  "email":"maisuriya@monarch.com",
+}
+```
+
+_reponse_ :
+
+```js
+{
+    "_id": "6082d3318b2a795b31c07965",
+    "firstname":"Monarch",
+    "lastname":"Maisuriya",
+    "email":"maisuriya@monarch.com",
+    "password": "$2b$10$lW3lQ6SBhyM2g7BtPRw0suYLt7ohtMYI9Nr3MyxdnQ/Q/mGB/s61O",
+    "createdAt": "2021-04-23T14:01:21.654Z",
+    "updatedAt": "2021-04-23T14:01:21.654Z",
+    "__v": 0
+}
+```
+
+**DELETE** `/users/delete/:id`
+
+_request_ :
+
+```js
+//Pass the user id in query params
+{
+  Authorization: "Bearer XXX";
+}
+```
+
+_reponse_ :
+
+```bash
+"Deleted User"
+```
 
 ## Built with
 
@@ -116,3 +179,7 @@ _reponse_ :
 ## Help
 
 For more information on all the things you can do with Express visit - [Getting Started guide on Express](https://expressjs.com/en/starter/installing.html).
+
+```
+
+```
