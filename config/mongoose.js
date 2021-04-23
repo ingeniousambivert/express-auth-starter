@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
+const { mongoUri } = require("./index");
 
 mongoose.set("useCreateIndex", true);
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.set("useFindAndModify", false);
+mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

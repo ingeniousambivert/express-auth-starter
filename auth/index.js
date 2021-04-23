@@ -5,12 +5,13 @@ const bcrypt = require("bcrypt");
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 const UserModel = require("../models/users");
+const { jwtSecret } = require("../config");
 
 passport.use(
   new JWTStrategy(
     {
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_SECRET,
+      secretOrKey: jwtSecret,
     },
     function (jwtPayload, done) {
       return UserModel.findById(jwtPayload.sub)
@@ -31,7 +32,7 @@ const generateToken = (user) => {
       sub: user.id,
       issat: new Date().getTime(),
     },
-    process.env.JWT_SECRET,
+    jwtSecret,
     {
       expiresIn: "1d",
     }
@@ -43,7 +44,7 @@ const isValidPassword = async function (password, user) {
 };
 
 const decodeToken = function (token) {
-  const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+  const decodedToken = jwt.verify(token, jwtSecret);
   return decodedToken;
 };
 
