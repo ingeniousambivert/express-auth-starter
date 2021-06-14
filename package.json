@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "NODE_ENV=production node ./bin/www",
-    "dev": "NODE_ENV=development nodemon --trace-deprecation --trace-warnings ./bin/www"
+    "dev": "NODE_ENV=development DEBUG=express-auth-starter:* nodemon --trace-deprecation --trace-warnings ./bin/www"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
