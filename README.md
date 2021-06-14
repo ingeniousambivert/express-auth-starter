@@ -50,6 +50,7 @@ DEBUG=express-auth-starter:* npm run dev
 ## Routes
 
 **GET** `/users/:id`
+
 _request_ :
 
 ```js
