@@ -6,7 +6,7 @@ async function createUser(req, res) {
   try {
     const foundUser = await UserModel.findOne({ email });
     if (foundUser) {
-      return res.status(403).json({ error: "Email is already in use" });
+      return res.status(409).json({ error: "Email is already in use" });
     }
     const newUser = new UserModel({ firstname, lastname, email, password });
     await newUser.save();
