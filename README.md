@@ -27,7 +27,7 @@ npm start
 3.2 Start your server in development mode.
 
 ```bash
-DEBUG=express-auth-starter:* npm run dev
+npm run dev
 ```
 
 4. Configuring the server with environment variables
