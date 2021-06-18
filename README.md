@@ -40,11 +40,19 @@ npm run dev
    PORT=8000
 
    # MongoDB config
-   MONGO_URI=mongodb://127.0.0.1:27017/express-auth-starter
+   MONGO_URI=mongodb://127.0.0.1:27017/teller-blog-server
 
    # JWT config
     # Do not use the sample string below, to get a hex string run: openssl rand -hex 32
-   JWT_SECRET=4cc0c74e26c5f9500356350d05b39c79b79655bb1a6df7bbe69f6f5b2fb0f04e
+    ACCESS_TOKEN_SECRET=b970aded3f8731894204ea5cc127756b197925591281a2c7538660b99791b984
+    REFRESH_TOKEN_SECRET=f820f7853587aa1f1f75f4040750199825cc1cc7cf4a26bc95212423c76224ef
+
+   # Node Mailer config
+      GMAIL_USERNAME=yourusername
+      GMAIL_PASSWORD=yourpassword
+
+   # Client URL - For mails 
+    CLIENT_URL=http://127.0.0.1:3000
    ```
 
 ## Routes
