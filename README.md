@@ -6,6 +6,8 @@
 
 This project uses [Express](https://expressjs.com/). Fast, unopinionated, minimalist web framework for Node.js.
 
+For starter with plain JWT based authentication use branch [`plain-auth`](https://github.com/ingeniousambivert/express-auth-starter/tree/plain-auth)
+
 ## Getting Started
 
 Getting up and running is simple.
