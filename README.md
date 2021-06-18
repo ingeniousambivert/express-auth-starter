@@ -50,6 +50,7 @@ npm run dev
     REFRESH_TOKEN_SECRET=f820f7853587aa1f1f75f4040750199825cc1cc7cf4a26bc95212423c76224ef
 
    # Node Mailer config
+   # By default the *mailer* works with the [SMTP Transport](https://www.npmjs.com/package/nodemailer-smtp-transport) configured with Gmail. But you can use any supported [transports](https://nodemailer.com/transports/).
       GMAIL_USERNAME=yourusername
       GMAIL_PASSWORD=yourpassword
 
