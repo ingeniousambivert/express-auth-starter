@@ -150,7 +150,7 @@ async function getUser(req, res) {
   }
 }
 
-async function updateUser(req, res) {
+async function updateData(req, res) {
   const { id } = req.params;
   const data = req.body;
   try {
@@ -507,7 +507,7 @@ module.exports = {
   refreshUserAccess,
   revokeUserAccess,
   getUser,
-  updateUser,
+  updateData,
   updateEmail,
   updatePassword,
   deleteUser,
