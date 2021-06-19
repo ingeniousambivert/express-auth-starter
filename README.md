@@ -61,6 +61,8 @@ npm run dev
 
 ## Routes
 
+All routes start with a prefix of - `/api/`
+
 **GET** `/users/:id`
 
 _request_ :
