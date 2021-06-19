@@ -137,8 +137,6 @@ async function getUser(req, res) {
     } else {
       const user = await UserModel.findById(id, { password: 0 });
       if (user) {
-        console.log(typeof user.verifyExpires);
-        console.log(user.verifyExpires);
         return res.status(200).json(user);
       } else {
         return res.status(404).json({ error: "User not found" });
