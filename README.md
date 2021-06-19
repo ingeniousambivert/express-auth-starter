@@ -1,6 +1,6 @@
 # Express-Auth
 
-> Minimal Express Server with JWT Auth
+> Minimal Express Server with Authentication and User Management
 
 ## About
 
