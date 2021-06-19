@@ -1,4 +1,4 @@
-# Express-Auth
+# Express-Starter
 
 > Minimal Express Server with Authentication and User Management
 
