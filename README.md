@@ -1,6 +1,6 @@
-# Express-Auth
+# Express-Starter
 
-> Minimal Express Server with JWT Auth
+> Minimal Express Server with Authentication and User Management
 
 ## About
 
@@ -60,6 +60,8 @@ npm run dev
    By default the *mailer* works with the [SMTP Transport](https://www.npmjs.com/package/nodemailer-smtp-transport) configured with Gmail. But you can use any supported [transports](https://nodemailer.com/transports/).
 
 ## Routes
+
+All routes start with a prefix of - `/api/`
 
 **GET** `/users/:id`
 
