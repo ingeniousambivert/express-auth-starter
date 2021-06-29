@@ -49,7 +49,7 @@ const generateAccessToken = (userId) => {
 const generateRefreshToken = (userId) => {
   return new Promise((resolve, reject) => {
     const payload = {
-      iss: "teller-blog",
+      iss: "express-starter",
       sub: userId,
       issat: new Date().getTime(),
     };
