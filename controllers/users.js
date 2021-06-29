@@ -10,7 +10,6 @@ const {
 } = require("../auth");
 const { clientUrl } = require("../config");
 const redisClient = require("../config/redis");
-const cloudinary = require("../utils/client");
 const {
   deleteDir,
   createDir,
@@ -185,132 +184,6 @@ async function updateData(req, res) {
       } else {
         return res.status(404).json({ error: "User not found" });
       }
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-}
-
-async function updateFile(req, res) {
-  const { id } = req.params;
-  const data = req.body;
-  const path = "./temp/";
-  const dir = "./temp";
-
-  const uploadFile = (picture, folder) => {
-    return new Promise((resolve, reject) => {
-      let uploadedData = {};
-      picture.mv(path + picture.name);
-      cloudinary.v2.uploader.upload(
-        path + picture.name,
-        {
-          folder: folder,
-          use_filename: true,
-          public_id: id,
-        },
-        function (error, result) {
-          if (error) {
-            console.log(error);
-            reject(error);
-          }
-          uploadedData.public_id = result?.public_id;
-          uploadedData.public_url = result?.secure_url;
-          resolve(uploadedData);
-        }
-      );
-    });
-  };
-
-  try {
-    const user = await UserModel.findById(id);
-    if (user) {
-      if (data?.email || data?.password) {
-        return res.status(400).json({
-          error: "Cannot update email or password via this endpoint",
-        });
-      } else {
-        if (!req.files) {
-          res.status(400).json({ error: "Please upload a PNG or JPEG file" });
-        } else {
-          if (req.files.profilePicture) {
-            let profilePicture = req.files.profilePicture;
-            if (
-              profilePicture.mimetype === "image/png" ||
-              profilePicture.mimetype === "image/jpeg"
-            ) {
-              createDir(dir);
-              const data = await uploadFile(profilePicture, "profilePictures");
-              const updatedData = { "profile.picture": data.public_url };
-              if (
-                typeof updatedData["profile.picture"] !== undefined &&
-                updatedData["profile.picture"] !== null
-              ) {
-                const updatedUser = await UserModel.findOneAndUpdate(
-                  { _id: id },
-                  {
-                    $set: updatedData,
-                  },
-                  {
-                    new: true,
-                  }
-                );
-                deleteDir(dir);
-                return res.status(200).json({
-                  message: "File uploaded successfully",
-                  updatedUser,
-                });
-              } else {
-                deleteDir(dir);
-                return res.status(500).json({ error: "Could not upload file" });
-              }
-            } else {
-              res
-                .status(400)
-                .json({ error: "Please upload a valid PNG or JPEG file" });
-            }
-          } else if (req.files.coverPicture) {
-            let coverPicture = req.files.coverPicture;
-            if (
-              coverPicture.mimetype === "image/png" ||
-              coverPicture.mimetype === "image/jpeg"
-            ) {
-              createDir(dir);
-              const data = await uploadFile(coverPicture, "coverPictures");
-              const updatedData = { "profile.cover": data.public_url };
-              if (
-                typeof updatedData["profile.cover"] !== undefined &&
-                updatedData["profile.cover"] !== null
-              ) {
-                const updatedUser = await UserModel.findOneAndUpdate(
-                  { _id: id },
-                  {
-                    $set: updatedData,
-                  },
-                  {
-                    new: true,
-                  }
-                );
-                deleteDir(dir);
-                return res
-                  .status(200)
-                  .json({ message: "File uploaded successfully", updatedUser });
-              } else {
-                deleteDir(dir);
-                return res.status(500).json({ error: "Could not upload file" });
-              }
-            } else {
-              res
-                .status(400)
-                .json({ error: "Please upload a valid PNG or JPEG file" });
-            }
-          } else {
-            res.status(400).json({ error: "Please upload a PNG or JPEG file" });
-          }
-        }
-      }
-    } else {
-      return res.status(404).json({ error: "User not found" });
     }
   } catch (error) {
     console.log(error);
@@ -651,7 +524,6 @@ module.exports = {
   revokeUserAccess,
   getUser,
   updateData,
-  updateFile,
   updateEmail,
   updatePassword,
   deleteUser,
