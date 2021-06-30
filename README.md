@@ -12,7 +12,7 @@ For starter with plain JWT based authentication use branch [`plain-auth`](https:
 
 Getting up and running is simple.
 
-1. Make sure you have [NodeJS](https://nodejs.org/), [npm](https://www.npmjs.com/) and [MongoDB](https://www.mongodb.com/) installed in your system globally.
+1. Make sure you have [NodeJS](https://nodejs.org/), [npm](https://www.npmjs.com/), [Redis](https://redis.io/) and [MongoDB](https://www.mongodb.com/) installed in your system globally.
 2. Install your dependencies.
 
 ```bash
