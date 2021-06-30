@@ -368,8 +368,9 @@ async function accountManagement(req, res) {
       switch (type) {
         case "verify-user":
           try {
-            UserModel.findByPk(userId).then(async (user) => {
-              if (user) {
+            UserModel.findByPk(userId).then(async (userData) => {
+              if (userData) {
+                const user = userData.get({ plain: true });
                 if (user.verifyToken && user.verifyExpires) {
                   const isValid = await bcrypt.compare(token, user.verifyToken);
                   if (!isValid) {
@@ -388,11 +389,12 @@ async function accountManagement(req, res) {
                       ).then(([rowsUpdate, updatedUser]) => {
                         if (rowsUpdate > 0) {
                           return res.status(200).json({
+                            updatedUser,
                             message: "User has been succesfully verified",
                           });
                         } else {
-                          return res.status(200).json({
-                            message: "User has been succesfully verified",
+                          return res.status(400).json({
+                            message: "Could not verify user",
                           });
                         }
                       });
@@ -415,40 +417,41 @@ async function accountManagement(req, res) {
 
         case "resend-verify":
           try {
-            const user = await UserModel.findById(userId);
-            if (user) {
-              if (user.isVerified === true) {
-                console.log(user.isVerified);
-                return res
-                  .status(400)
-                  .json({ error: "User is already verified" });
-              } else {
-                const verifyToken = crypto.randomBytes(32).toString("hex");
-                const verifyTokenHash = await bcrypt.hash(verifyToken, 10);
-                const verifyExpires = getIncrementDate(24);
-                await UserModel.updateOne(
-                  { _id: userId },
-                  { $set: { verifyToken: verifyTokenHash, verifyExpires } }
-                );
-
-                const mailOptions = createVerifyMail(
-                  user.email,
-                  userId,
-                  verifyToken,
-                  clientUrl
-                );
-                mailTransporter.sendMail(mailOptions, function (err) {
-                  if (err) {
-                    return res.status(500).json({ error: err.message });
-                  }
-                  res.status(200).json({
-                    message: `Resent verification email to ${user.email}`,
+            UserModel.findByPk(userId).then(async (userData) => {
+              const user = userData.get({ plain: true });
+              if (user) {
+                if (user.isVerified === true) {
+                  console.log(user.isVerified);
+                  return res
+                    .status(400)
+                    .json({ error: "User is already verified" });
+                } else {
+                  const verifyToken = crypto.randomBytes(32).toString("hex");
+                  const verifyTokenHash = await bcrypt.hash(verifyToken, 10);
+                  const verifyExpires = getIncrementDate(24);
+                  await UserModel.update(
+                    { verifyToken: verifyTokenHash, verifyExpires },
+                    { where: { id: userId } }
+                  );
+                  const mailOptions = createVerifyMail(
+                    user.email,
+                    userId,
+                    verifyToken,
+                    clientUrl
+                  );
+                  mailTransporter.sendMail(mailOptions, function (err) {
+                    if (err) {
+                      return res.status(500).json({ error: err.message });
+                    }
+                    res.status(200).json({
+                      message: `Resent verification email to ${user.email}`,
+                    });
                   });
-                });
+                }
+              } else {
+                return res.status(404).json({ error: "User not found" });
               }
-            } else {
-              return res.status(404).json({ error: "User not found" });
-            }
+            });
           } catch (error) {
             console.log(error);
             res.status(500).json({ error: "Internal Server Error" });
@@ -457,34 +460,41 @@ async function accountManagement(req, res) {
 
         case "forgot-password":
           try {
-            const user = await UserModel.findOne({ email });
-            if (user) {
-              const id = user._id;
-              const resetToken = crypto.randomBytes(32).toString("hex");
-              const resetTokenHash = await bcrypt.hash(resetToken, 10);
-              const resetExpires = getIncrementDate(6);
+            UserModel.findOne({ where: { email } })
+              .then(async (userData) => {
+                const user = userData.get({ plain: true });
+                if (user) {
+                  const id = user.id;
+                  const resetToken = crypto.randomBytes(32).toString("hex");
+                  const resetTokenHash = await bcrypt.hash(resetToken, 10);
+                  const resetExpires = getIncrementDate(6);
 
-              await UserModel.findByIdAndUpdate(id, {
-                $set: { resetToken: resetTokenHash, resetExpires },
-              });
-
-              const mailOptions = createForgotPasswordMail(
-                user.email,
-                id,
-                resetToken,
-                clientUrl
-              );
-              mailTransporter.sendMail(mailOptions, function (err) {
-                if (err) {
-                  return res.status(500).json({ error: err.message });
+                  await UserModel.update(
+                    { resetToken: resetTokenHash, resetExpires },
+                    { where: { id } }
+                  );
+                  const mailOptions = createForgotPasswordMail(
+                    user.email,
+                    id,
+                    resetToken,
+                    clientUrl
+                  );
+                  mailTransporter.sendMail(mailOptions, function (err) {
+                    if (err) {
+                      return res.status(500).json({ error: err.message });
+                    }
+                    res.status(200).json({
+                      message: `Sent a reset password link to ${user.email}`,
+                    });
+                  });
+                } else {
+                  return res.status(404).json({ error: "User not found" });
                 }
-                res.status(200).json({
-                  message: `Sent a reset password link to ${user.email}`,
-                });
+              })
+              .catch((error) => {
+                console.log(error);
+                res.status(500).json({ error: "Could not fetch user data" });
               });
-            } else {
-              return res.status(404).json({ error: "User not found" });
-            }
           } catch (error) {
             console.log(error);
             res.status(500).json({ error: "Internal Server Error" });
@@ -494,46 +504,54 @@ async function accountManagement(req, res) {
         case "reset-password":
           try {
             if (password) {
-              const user = await UserModel.findById(userId);
-              if (user) {
-                if (user.resetToken && user.resetExpires) {
-                  const isValid = await bcrypt.compare(token, user.resetToken);
-                  if (!isValid) {
-                    return res.status(400).json({ error: "Invalid token" });
-                  } else {
-                    const now = Date.now();
-                    const diff = user.resetExpires - now;
-                    if (diff > 0) {
-                      const passwordHash = await bcrypt.hash(password, 10);
-                      await UserModel.findByIdAndUpdate(userId, {
-                        $set: {
-                          password: passwordHash,
-                          resetToken: null,
-                          resetExpires: null,
-                        },
-                      });
-                      const mailOptions = createPasswordResetMail(user.email);
-                      mailTransporter.sendMail(
-                        mailOptions,
-                        async function (err) {
-                          if (err) {
-                            return res.status(500).json({ error: err.message });
-                          }
-                          return res.status(200).json({
-                            message: "Password Reset Successfully",
-                          });
-                        }
-                      );
+              UserModel.findByPk(userId).then(async (userData) => {
+                const user = userData.get({ plain: true });
+                if (user) {
+                  if (user.resetToken && user.resetExpires) {
+                    const isValid = await bcrypt.compare(
+                      token,
+                      user.resetToken
+                    );
+                    if (!isValid) {
+                      return res.status(400).json({ error: "Invalid token" });
                     } else {
-                      return res.status(400).json({ error: "Expired token" });
+                      const now = Date.now();
+                      const diff = user.resetExpires - now;
+                      if (diff > 0) {
+                        const passwordHash = await bcrypt.hash(password, 10);
+                        await UserModel.update(
+                          {
+                            password: passwordHash,
+                            resetToken: null,
+                            resetExpires: null,
+                          },
+                          { where: { id: userId } }
+                        );
+                        const mailOptions = createPasswordResetMail(user.email);
+                        mailTransporter.sendMail(
+                          mailOptions,
+                          async function (err) {
+                            if (err) {
+                              return res
+                                .status(500)
+                                .json({ error: err.message });
+                            }
+                            return res.status(200).json({
+                              message: "Password Reset Successfully",
+                            });
+                          }
+                        );
+                      } else {
+                        return res.status(400).json({ error: "Expired token" });
+                      }
                     }
+                  } else {
+                    return res.status(400).json({ error: "Invalid token" });
                   }
                 } else {
-                  return res.status(400).json({ error: "Invalid token" });
+                  return res.status(404).json({ error: "User not found" });
                 }
-              } else {
-                return res.status(404).json({ error: "User not found" });
-              }
+              });
             } else {
               res.status(400).json({ error: "Password is required" });
             }
