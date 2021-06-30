@@ -1,43 +1,64 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+const Sequelize = require("sequelize");
+const sequelize = require("../config/sequelize");
 
-const Schema = mongoose.Schema;
-
-const UserSchema = new Schema(
+const UserModel = sequelize.define(
+  "user",
   {
-    firstname: {
-      type: String,
-      required: true,
-    },
-    lastname: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
+    id: {
+      type: Sequelize.UUID,
+      primaryKey: true,
+      defaultValue: Sequelize.UUIDV4,
       unique: true,
     },
-    password: { type: String, required: true },
-    isActive: { type: Boolean, default: true },
-    permissions: { type: Array, default: ["user"] },
-    isVerified: { type: Boolean, default: false },
-    verifyToken: { type: String },
-    verifyExpires: { type: Date },
-    resetToken: { type: String },
-    resetExpires: { type: Date },
+    firstname: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      notEmpty: true,
+    },
+    lastname: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      notEmpty: true,
+    },
+    email: {
+      type: Sequelize.STRING,
+      isEmail: true,
+      allowNull: false,
+      unique: true,
+      notEmpty: true,
+    },
+    password: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      notEmpty: true,
+    },
+    isActive: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    },
+    permissions: {
+      type: Sequelize.ARRAY(Sequelize.TEXT),
+      defaultValue: ["user"],
+      allowNull: false,
+    },
+    isVerified: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    verifyToken: { type: Sequelize.STRING },
+    verifyExpires: { type: Sequelize.DATE, isDate: true },
+    resetToken: { type: Sequelize.STRING },
+    resetExpires: { type: Sequelize.DATE, isDate: true },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-UserSchema.pre("save", async function (next) {
-  const user = this;
-  const hash = await bcrypt.hash(user.password, 10);
-
-  user.password = hash;
-  next();
+UserModel.sync().then(() => {
+  console.log("Users table created");
 });
-
-const UserModel = mongoose.model("user", UserSchema);
 
 module.exports = UserModel;

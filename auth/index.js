@@ -15,7 +15,7 @@ passport.use(
       secretOrKey: accessSecret,
     },
     function (jwtPayload, done) {
-      return UserModel.findById(jwtPayload.sub)
+      return UserModel.findByPk(jwtPayload.sub)
         .then((user) => {
           return done(null, user);
         })
@@ -29,7 +29,7 @@ passport.use(
 const generateAccessToken = (userId) => {
   return new Promise((resolve, reject) => {
     const payload = {
-      iss: "teller-blog",
+      iss: "express-starter",
       sub: userId,
       issat: new Date().getTime(),
     };

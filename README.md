@@ -39,10 +39,14 @@ npm run dev
 
    ```env
    # Express Server config
-   PORT=8000
+    PORT=8000
+    HOST=localhost
 
-   # MongoDB config
-   MONGO_URI=mongodb://127.0.0.1:27017/express-server
+   # PostgresSQL config
+    SEQUELIZE_DIALECT=postgres
+    POSTGRES_DATABASE=express-starter
+    POSTGRES_USER=username
+    POSTGRES_PASSWORD=password  # if any, or else leave empty
 
    # JWT config
     # Do not use the sample string below, to get a hex string run: openssl rand -hex 32

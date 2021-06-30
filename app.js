@@ -2,7 +2,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const logger = require("morgan");
-require("./config/mongoose");
+require("./config/sequelize");
 
 const usersRouter = require("./routes/users");
 
