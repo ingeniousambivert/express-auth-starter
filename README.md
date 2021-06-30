@@ -12,7 +12,7 @@ For starter with plain JWT based authentication use branch [`plain-auth`](https:
 
 Getting up and running is simple.
 
-1. Make sure you have [NodeJS](https://nodejs.org/), [npm](https://www.npmjs.com/) and [MongoDB](https://www.mongodb.com/) installed in your system globally.
+1. Make sure you have [NodeJS](https://nodejs.org/), [npm](https://www.npmjs.com/), [Redis](https://redis.io/) and [PostgreSQL](https://www.postgresql.org/) installed in your system globally.
 2. Install your dependencies.
 
 ```bash
@@ -82,7 +82,7 @@ _reponse_ :
 
 ```js
 {
-    "_id": "6082d3318b2a795b31c07965",
+    "id": "6082d3318b2a795b31c07965",
     "firstname":"Monarch",
     "lastname":"Maisuriya",
     "email":"monarch@maisuriya.com",
@@ -261,7 +261,7 @@ _reponse_ :
 
 ```js
 {
-    "_id": "6082d3318b2a795b31c07965",
+    "id": "6082d3318b2a795b31c07965",
     "firstname":"Testing First Name",
     "lastname":"Maisuriya",
     "email":"maisuriya@monarch.com",
@@ -314,7 +314,7 @@ _reponse_ :
 {
   "Sent verification email to monarch@maisuriya.com",
   {
-    "_id": "6082d3318b2a795b31c07965",
+    "id": "6082d3318b2a795b31c07965",
     "firstname":"Testing First Name",
     "lastname":"Maisuriya",
     "email":"monarch@maisuriya.com",
