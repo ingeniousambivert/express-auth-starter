@@ -14,7 +14,7 @@ For starter with plain JWT based authentication use branch [`plain-auth`](https:
 
  **Plain Auth** 
 
- This branch provides a REST API with JWT based local authentication with **MongoDB**.
+ This variant provides a REST API with JWT based local authentication with **MongoDB**.
  ```bash
     git clone https://github.com/ingeniousambivert/express-starter.git
     git checkout plain-auth
@@ -22,15 +22,15 @@ For starter with plain JWT based authentication use branch [`plain-auth`](https:
 
  **MongoDB Auth Management**
 
- This branch provides a REST API with JWT based local authentication and basic auth management (verify-email, forgot-password, reset-password) with MongoDB.
+ This variant provides a REST API with JWT based local authentication and basic auth management (verify-email, forgot-password, reset-password) with MongoDB.
  ```bash
     git clone https://github.com/ingeniousambivert/express-starter.git
     git checkout auth-mongodb
   ```
 
  **PostgreSQL Auth Management**
- 
- This branch provides a REST API with JWT based local authentication and basic auth management (verify-email, forgot-password, reset-password) with PostgreSQL.
+
+ This variant provides a REST API with JWT based local authentication and basic auth management (verify-email, forgot-password, reset-password) with PostgreSQL.
  ```bash
     git clone https://github.com/ingeniousambivert/express-starter.git
     git checkout auth-postgresql
