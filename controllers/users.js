@@ -50,8 +50,9 @@ async function createUser(req, res) {
         verifyToken,
         clientUrl
       );
-      mailTransporter.sendMail(mailOptions, function (err) {
+      mailTransporter.sendMail(mailOptions, async function (err) {
         if (err) {
+          await UserModel.findByIdAndDelete(newUser._id);
           return res.status(500).json({ error: err.message });
         }
         res.status(201).json({
