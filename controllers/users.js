@@ -11,8 +11,6 @@ const {
 const { clientUrl } = require("../config");
 const redisClient = require("../config/redis");
 const {
-  deleteDir,
-  createDir,
   createVerifyMail,
   createForgotPasswordMail,
   createPasswordResetMail,
