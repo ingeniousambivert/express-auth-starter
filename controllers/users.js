@@ -21,7 +21,7 @@ const {
 } = require("../utils");
 
 async function createUser(req, res) {
-  const { firstname, lastname, email, password, profile } = req.body;
+  const { firstname, lastname, email, password } = req.body;
 
   try {
     UserModel.findOne({ where: { email } }).then(async (foundUser) => {
@@ -38,7 +38,6 @@ async function createUser(req, res) {
           lastname,
           email,
           password: passwordHash,
-          profile,
           verifyToken: verifyTokenHash,
           verifyExpires,
         })
