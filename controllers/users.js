@@ -48,10 +48,13 @@ async function createUser(req, res) {
               verifyToken,
               clientUrl
             );
-            mailTransporter.sendMail(mailOptions, async function (err) {
-              if (err) {
-                await UserModel.destroy({ where: { id : userId } })
-                return res.status(500).json({ error: err.message });
+            mailTransporter.sendMail(mailOptions, async function (error) {
+              if (error) {
+                await UserModel.destroy({ where: { id: userId } });
+                logger.error(
+                  `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+                );
+                return res.status(500).json({ error: error.message });
               }
               res.status(201).json({
                 message: `Created User with ID: ${userId} and sent verification email to ${userEmail}`,
@@ -59,13 +62,18 @@ async function createUser(req, res) {
             });
           })
           .catch((error) => {
-            return res.status(500).json({ error });
+            logger.error(
+              `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+            );
+            return res.status(500).json({ error: error.message });
           });
       }
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    logger.error(
+      `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+    );
+    return res.status(500).json({ error: error.message });
   }
 }
 
@@ -88,12 +96,16 @@ async function authenticateUser(req, res) {
         }
       })
       .catch((error) => {
-        console.log(error);
-        res.status(500).json({ error: error.message });
+        logger.error(
+          `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+        );
+        return res.status(500).json({ error: error.message });
       });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    logger.error(
+      `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+    );
+    return res.status(500).json({ error: error.message });
   }
 }
 
@@ -111,7 +123,10 @@ async function refreshUserAccess(req, res) {
         .json({ accessToken, refreshToken: newRefreshToken, id });
     }
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    logger.error(
+      `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+    );
+    return res.status(500).json({ error: error.message });
   }
 }
 
@@ -122,17 +137,21 @@ async function revokeUserAccess(req, res) {
     if (!isTokenValid) {
       return res.status(403).json({ error: "Access denied" });
     } else {
-      redisClient.DEL(id, (err, val) => {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({ error: "Internal Server Error" });
+      redisClient.DEL(id, (error, val) => {
+        if (error) {
+          logger.error(
+            `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+          );
+          return res.status(500).json({ error: error.message });
         }
         return res.sendStatus(204);
       });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    logger.error(
+      `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+    );
+    return res.status(500).json({ error: error.message });
   }
 }
 
@@ -157,8 +176,10 @@ async function getUser(req, res) {
       );
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    logger.error(
+      `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+    );
+    return res.status(500).json({ error: error.message });
   }
 }
 
@@ -185,7 +206,9 @@ async function updateData(req, res) {
                 return res.status(200).json(updatedUser);
               })
               .catch((error) => {
-                console.log(error);
+                logger.error(
+                  `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+                );
                 return res.status(400).json({ error: "Could not update user" });
               });
           }
@@ -195,8 +218,10 @@ async function updateData(req, res) {
       });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    logger.error(
+      `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+    );
+    return res.status(500).json({ error: error.message });
   }
 }
 
@@ -235,9 +260,12 @@ async function updateEmail(req, res) {
                       verifyToken,
                       clientUrl
                     );
-                    mailTransporter.sendMail(mailOptions, function (err) {
-                      if (err) {
-                        return res.status(500).json({ error: err.message });
+                    mailTransporter.sendMail(mailOptions, function (error) {
+                      if (error) {
+                        logger.error(
+                          `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+                        );
+                        return res.status(500).json({ error: error.message });
                       }
                       return res.status(200).json({
                         message: `Successfully updated and sent verification email to ${email}`,
@@ -247,7 +275,9 @@ async function updateEmail(req, res) {
                   }
                 })
                 .catch((error) => {
-                  console.log(error);
+                  logger.error(
+                    `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+                  );
                   return res
                     .status(400)
                     .json({ error: "Could not update user email" });
@@ -264,8 +294,10 @@ async function updateEmail(req, res) {
       res.status(400).json({ error: "Email and password are required" });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    logger.error(
+      `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+    );
+    return res.status(500).json({ error: error.message });
   }
 }
 
@@ -288,24 +320,37 @@ async function updatePassword(req, res) {
               UserModel.update(
                 { password: passwordHash },
                 { returning: true, where: { id } }
-              ).then(([rowsUpdate, updatedUser]) => {
-                if (rowsUpdate > 0) {
-                  const email = updatedUser[0]["dataValues"]["email"];
-                  const mailOptions = createPasswordResetMail(email, "update");
-                  mailTransporter.sendMail(mailOptions, function (err) {
-                    if (err) {
-                      return res.status(500).json({ error: err.message });
-                    }
-                  });
-                  return res
-                    .status(200)
-                    .json({ message: "Successfully updated password" });
-                } else {
-                  return res
-                    .status(400)
-                    .json({ message: "Could not update password" });
-                }
-              });
+              )
+                .then(([rowsUpdate, updatedUser]) => {
+                  if (rowsUpdate > 0) {
+                    const email = updatedUser[0]["dataValues"]["email"];
+                    const mailOptions = createPasswordResetMail(
+                      email,
+                      "update"
+                    );
+                    mailTransporter.sendMail(mailOptions, function (error) {
+                      if (error) {
+                        logger.error(
+                          `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+                        );
+                        return res.status(500).json({ error: error.message });
+                      }
+                    });
+                    return res
+                      .status(200)
+                      .json({ message: "Successfully updated password" });
+                  } else {
+                    return res
+                      .status(400)
+                      .json({ message: "Could not update password" });
+                  }
+                })
+                .catch((error) => {
+                  logger.error(
+                    `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+                  );
+                  return res.status(500).json({ error: error.message });
+                });
             } else {
               return res.status(401).json({ error: "Password is invalid" });
             }
@@ -320,8 +365,10 @@ async function updatePassword(req, res) {
         .json({ error: "Current password and new password are required" });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    logger.error(
+      `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+    );
+    return res.status(500).json({ error: error.message });
   }
 }
 
@@ -338,22 +385,31 @@ async function deleteUser(req, res) {
       } else {
         UserModel.destroy({
           where: { id },
-        }).then((rowsUpdate) => {
-          if (rowsUpdate > 0) {
-            return res.status(200).json({
-              message: `Successfully deleted user with ID: ${id}`,
-            });
-          } else {
-            return res.status(404).json({ error: "User not found" });
-          }
-        });
+        })
+          .then((rowsUpdate) => {
+            if (rowsUpdate > 0) {
+              return res.status(200).json({
+                message: `Successfully deleted user with ID: ${id}`,
+              });
+            } else {
+              return res.status(404).json({ error: "User not found" });
+            }
+          })
+          .catch((error) => {
+            logger.error(
+              `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+            );
+            return res.status(500).json({ error: error.message });
+          });
       }
     } else {
       res.status(400).json({ error: "User ID is required" });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    logger.error(
+      `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+    );
+    return res.status(500).json({ error: error.message });
   }
 }
 
@@ -384,18 +440,25 @@ async function accountManagement(req, res) {
                           verifyExpires: null,
                         },
                         { returning: true, where: { id: userId } }
-                      ).then(([rowsUpdate, updatedUser]) => {
-                        if (rowsUpdate > 0) {
-                          return res.status(200).json({
-                            updatedUser,
-                            message: "User has been succesfully verified",
-                          });
-                        } else {
-                          return res.status(400).json({
-                            message: "Could not verify user",
-                          });
-                        }
-                      });
+                      )
+                        .then(([rowsUpdate, updatedUser]) => {
+                          if (rowsUpdate > 0) {
+                            return res.status(200).json({
+                              updatedUser,
+                              message: "User has been succesfully verified",
+                            });
+                          } else {
+                            return res.status(400).json({
+                              message: "Could not verify user",
+                            });
+                          }
+                        })
+                        .catch((error) => {
+                          logger.error(
+                            `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+                          );
+                          return res.status(500).json({ error: error.message });
+                        });
                     } else {
                       return res.status(400).json({ error: "Expired token" });
                     }
@@ -408,8 +471,10 @@ async function accountManagement(req, res) {
               }
             });
           } catch (error) {
-            console.log(error);
-            res.status(500).json({ error: "Internal Server Error" });
+            logger.error(
+              `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+            );
+            return res.status(500).json({ error: error.message });
           }
           break;
 
@@ -437,9 +502,12 @@ async function accountManagement(req, res) {
                     verifyToken,
                     clientUrl
                   );
-                  mailTransporter.sendMail(mailOptions, function (err) {
-                    if (err) {
-                      return res.status(500).json({ error: err.message });
+                  mailTransporter.sendMail(mailOptions, function (error) {
+                    if (error) {
+                      logger.error(
+                        `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+                      );
+                      return res.status(500).json({ error: error.message });
                     }
                     res.status(200).json({
                       message: `Resent verification email to ${user.email}`,
@@ -451,8 +519,10 @@ async function accountManagement(req, res) {
               }
             });
           } catch (error) {
-            console.log(error);
-            res.status(500).json({ error: "Internal Server Error" });
+            logger.error(
+              `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+            );
+            return res.status(500).json({ error: error.message });
           }
           break;
 
@@ -477,9 +547,13 @@ async function accountManagement(req, res) {
                     resetToken,
                     clientUrl
                   );
-                  mailTransporter.sendMail(mailOptions, function (err) {
-                    if (err) {
+                  mailTransporter.sendMail(mailOptions, function (error) {
+                    if (error) {
                       return res.status(500).json({ error: err.message });
+                      logger.error(
+                        `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+                      );
+                      return res.status(500).json({ error: error.message });
                     }
                     res.status(200).json({
                       message: `Sent a reset password link to ${user.email}`,
@@ -490,12 +564,16 @@ async function accountManagement(req, res) {
                 }
               })
               .catch((error) => {
-                console.log(error);
-                res.status(500).json({ error: "Could not fetch user data" });
+                logger.error(
+                  `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+                );
+                return res.status(500).json({ error: error.message });
               });
           } catch (error) {
-            console.log(error);
-            res.status(500).json({ error: "Internal Server Error" });
+           logger.error(
+             `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+           );
+           return res.status(500).json({ error: error.message });
           }
           break;
 
@@ -528,11 +606,14 @@ async function accountManagement(req, res) {
                         const mailOptions = createPasswordResetMail(user.email);
                         mailTransporter.sendMail(
                           mailOptions,
-                          async function (err) {
-                            if (err) {
-                              return res
-                                .status(500)
-                                .json({ error: err.message });
+                          async function (error) {
+                            if (error) {
+                             logger.error(
+                               `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+                             );
+                             return res
+                               .status(500)
+                               .json({ error: error.message });
                             }
                             return res.status(200).json({
                               message: "Password Reset Successfully",
@@ -554,8 +635,10 @@ async function accountManagement(req, res) {
               res.status(400).json({ error: "Password is required" });
             }
           } catch (error) {
-            console.log(error);
-            res.status(500).json({ error: "Internal Server Error" });
+            logger.error(
+              `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+            );
+            return res.status(500).json({ error: error.message });
           }
           break;
 
@@ -567,8 +650,10 @@ async function accountManagement(req, res) {
       res.status(400).json({ error: "Token and/or User id are required" });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    logger.error(
+      `${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+    );
+    return res.status(500).json({ error: error.message });
   }
 }
 
