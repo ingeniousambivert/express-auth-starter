@@ -1,4 +1,6 @@
 const redis = require("redis");
+const logger = require("../utils/logger");
+
 const client = redis.createClient({
   port: 6379,
   host: "127.0.0.1",
@@ -8,12 +10,8 @@ client.on("connect", () => {
   console.log("Redis client connected");
 });
 
-// client.on("ready", () => {
-//   console.log("Client connected to redis and ready to use...");
-// });
-
-client.on("error", (err) => {
-  console.log(err.message);
+client.on("error", (error) => {
+  logger.error(`${error.message}`);
 });
 
 client.on("end", () => {

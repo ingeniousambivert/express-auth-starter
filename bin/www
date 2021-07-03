@@ -5,6 +5,8 @@
  */
 
 const app = require("../app");
+const logger = require("../utils/logger");
+const config = require("../config");
 const debug = require("debug")("express-starter:server");
 const http = require("http");
 
@@ -82,5 +84,8 @@ function onError(error) {
 function onListening() {
   const addr = server.address();
   const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+  if (config.env === "production") {
+    logger.info(`Server started and running on ${bind}`);
+  }
   debug("Listening on " + bind);
 }
