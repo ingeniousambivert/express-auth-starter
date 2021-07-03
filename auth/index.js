@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 const UserModel = require("../models/users");
+const logger = require("../utils/logger");
 const { accessSecret, refreshSecret } = require("../config");
 const client = require("../config/redis");
 
@@ -19,8 +20,9 @@ passport.use(
         .then((user) => {
           return done(null, user);
         })
-        .catch((err) => {
-          return done(err);
+        .catch((error) => {
+          logger.error(`${error.message}`);
+          return done(error);
         });
     }
   )
@@ -36,10 +38,10 @@ const generateAccessToken = (userId) => {
     const options = {
       expiresIn: "1d",
     };
-    JWT.sign(payload, accessSecret, options, (err, token) => {
-      if (err) {
-        console.log(err);
-        reject(err);
+    JWT.sign(payload, accessSecret, options, (error, token) => {
+      if (error) {
+        logger.error(`${error.message}`);
+        reject(error);
       }
       resolve(token);
     });
@@ -56,20 +58,20 @@ const generateRefreshToken = (userId) => {
     const options = {
       expiresIn: "1y",
     };
-    JWT.sign(payload, refreshSecret, options, (err, token) => {
-      if (err) {
-        console.log(err);
-        reject(err);
+    JWT.sign(payload, refreshSecret, options, (error, token) => {
+      if (error) {
+        logger.error(`${error.message}`);
+        reject(error);
       }
       client.SET(
         userId.toString(),
         token,
         "EX",
         365 * 24 * 60 * 60,
-        (err, reply) => {
-          if (err) {
-            console.log(err);
-            reject(err);
+        (error, reply) => {
+          if (error) {
+            logger.error(`${error.message}`);
+            reject(error);
             return;
           }
           resolve(token);

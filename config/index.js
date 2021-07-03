@@ -4,6 +4,7 @@ const assert = require("assert");
 dotenv.config();
 
 const {
+  NODE_ENV,
   PORT,
   HOST,
   SEQUELIZE_DIALECT,
@@ -26,6 +27,7 @@ assert(ACCESS_TOKEN_SECRET, "ACCESS_TOKEN_SECRET is required");
 assert(REFRESH_TOKEN_SECRET, "REFRESH_TOKEN_SECRET is required");
 
 module.exports = {
+  env: NODE_ENV,
   port: PORT,
   host: HOST,
   sequelizeDialect: SEQUELIZE_DIALECT,

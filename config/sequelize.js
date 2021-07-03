@@ -6,6 +6,7 @@ const {
   sequelizeDialect,
   host,
 } = require("./index");
+const logger = require("../utils/logger");
 
 console.log(postgresDatabase, postgresUser, sequelizeDialect, host);
 
@@ -22,6 +23,6 @@ const sequelize = new Sequelize(
 sequelize
   .authenticate()
   .then(() => console.log("PostgreSQL client connected"))
-  .catch((error) => console.error(error));
+  .catch((error) => logger.error(`${error.message}`));
 
 module.exports = sequelize;
