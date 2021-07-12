@@ -49,14 +49,14 @@ npm run dev
       MONGO_HOST=127.0.0.1
       MONGO_DATABASE=express-starter
       # if any 
-      MONGO_USERNAME=
-      MONGO_PASSWORD=
+      MONGO_USERNAME=your-username
+      MONGO_PASSWORD=your-password
 
       # Redis config
       REDIS_PORT=6379
       REDIS_HOST=127.0.0.1
       # if any 
-      REDIS_PASSWORD=
+      REDIS_PASSWORD=your-password
 
       # JWT config
       # Do not use the sample string below, to get a hex string run: openssl rand -hex 32
