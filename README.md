@@ -10,12 +10,12 @@ This project uses [Express](https://expressjs.com/). Fast, unopinionated, minima
 #### Different Variants : 
 
 
- **Plain Auth** 
+ **Plain Auth MongoDB** 
 
- This variant provides a REST API with JWT based local authentication with **MongoDB**.
+ This variant provides a REST API with JWT based local authentication with MongoDB.
  ```bash
     git clone https://github.com/ingeniousambivert/express-starter.git
-    git checkout plain-auth
+    git checkout plain-auth-mongodb
   ```
 
  **MongoDB Auth Management**
@@ -23,7 +23,7 @@ This project uses [Express](https://expressjs.com/). Fast, unopinionated, minima
  This variant provides a REST API with JWT based local authentication and basic auth management (verify-email, forgot-password, reset-password) with MongoDB.
  ```bash
     git clone https://github.com/ingeniousambivert/express-starter.git
-    git checkout auth-mongodb
+    git checkout auth-manage-mongodb
   ```
 
  **PostgreSQL Auth Management**
@@ -31,5 +31,5 @@ This project uses [Express](https://expressjs.com/). Fast, unopinionated, minima
  This variant provides a REST API with JWT based local authentication and basic auth management (verify-email, forgot-password, reset-password) with PostgreSQL.
  ```bash
     git clone https://github.com/ingeniousambivert/express-starter.git
-    git checkout auth-postgresql
+    git checkout auth-manage-postgresql
   ```
