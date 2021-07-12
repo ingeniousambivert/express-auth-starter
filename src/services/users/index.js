@@ -44,7 +44,7 @@ class UserService {
                     email: data.email,
                   },
                   { new: true }
-                );
+                ).select({ password: 0 });
                 resolve(updatedUser);
               } else {
                 reject(401);
@@ -67,7 +67,7 @@ class UserService {
             ) {
               const updatedUser = await UserModel.findByIdAndUpdate(id, data, {
                 new: true,
-              });
+              }).select({ password: 0 });
               resolve(updatedUser);
             } else {
               reject(400);
