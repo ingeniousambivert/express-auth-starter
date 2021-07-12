@@ -250,7 +250,7 @@ _reponse_ :
 Status : 200 OK
 ```
 
-**DELETE** `/users/delete/:id`
+**DELETE** `/users/:id`
 
 _request_ :
 
