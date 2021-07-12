@@ -33,3 +33,12 @@ This project uses [Express](https://expressjs.com/). Fast, unopinionated, minima
     git clone https://github.com/ingeniousambivert/express-starter.git
     git checkout manage-auth-postgresql
   ```
+
+
+## Todo
+
+- [X]  Authentication Management 
+- [ ]  Role Based Access Control
+- [ ]  Move to a Dependency Injection Approach [Read More](https://softwareontheroad.com/ideal-nodejs-project-structure/#di)
+- [ ]  ? Add Scheduled Jobs for email sequences 
+- [ ]  ? Add Events (Pub/Sub) for different sequences 
