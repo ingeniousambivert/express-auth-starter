@@ -42,3 +42,13 @@ This project uses [Express](https://expressjs.com/). Fast, unopinionated, minima
 - [ ]  Move to a Dependency Injection Approach - [Read More](https://softwareontheroad.com/ideal-nodejs-project-structure/#di)
 - [ ]  ? Add Scheduled Jobs for email sequences 
 - [ ]  ? Add Events (Pub/Sub) for different sequences 
+
+
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+## Terms and License
+
+- Released under the [MIT](https://choosealicense.com/licenses/mit/) License.
