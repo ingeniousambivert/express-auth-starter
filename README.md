@@ -11,7 +11,7 @@ This project uses [Express](https://expressjs.com/). Fast, unopinionated, minima
 
 Getting up and running is simple.
 
-1. Make sure you have [NodeJS](https://nodejs.org/), [npm](https://www.npmjs.com/), [Redis](https://redis.io/) and [PostgreSQl](https://www.postgresql.org/) installed in your system globally.
+1. Make sure you have [NodeJS](https://nodejs.org/), [npm](https://www.npmjs.com/), [Redis](https://redis.io/) and [PostgreSQL](https://www.postgresql.org/) installed in your system globally.
 2. Install your dependencies.
 
 ```bash
@@ -350,7 +350,7 @@ Status : 200 OK
 
 [NodeJS](https://nodejs.org)
 
-[PostgreSQl](https://www.postgresql.org/)
+[PostgreSQL](https://www.postgresql.org/)
 
 ## Help
 
