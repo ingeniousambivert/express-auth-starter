@@ -1,5 +1,3 @@
-const crypto = require("crypto");
-const bcrypt = require("bcrypt");
 const logger = require("@helpers/logger");
 const UserModel = require("@models/users");
 const {
@@ -9,7 +7,6 @@ const {
   verifyRefreshToken,
 } = require("@helpers/auth");
 const redisClient = require("@config/loaders/redis");
-const { getIncrementDate } = require("@utils");
 
 class AuthService {
   async Signup(params) {
@@ -20,17 +17,11 @@ class AuthService {
         if (foundUser) {
           reject(409);
         } else {
-          const verifyToken = crypto.randomBytes(32).toString("hex");
-          const verifyTokenHash = await bcrypt.hash(verifyToken, 10);
-          const verifyExpires = getIncrementDate(24);
-
           const newUser = new UserModel({
             firstname,
             lastname,
             email,
             password,
-            verifyToken: verifyTokenHash,
-            verifyExpires,
           });
           await newUser.save();
           const { _id } = newUser;

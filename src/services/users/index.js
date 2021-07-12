@@ -1,9 +1,7 @@
-const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const logger = require("@helpers/logger");
 const UserModel = require("@models/users");
 const { isValidPassword, verifyAccessToken } = require("@helpers/auth");
-const { getIncrementDate } = require("@utils");
 
 class UserService {
   async Get(params) {
@@ -40,17 +38,10 @@ class UserService {
           if (user) {
             if (data.email && data.password) {
               if (await isValidPassword(data.password, user.password)) {
-                const verifyToken = crypto.randomBytes(32).toString("hex");
-                const verifyTokenHash = await bcrypt.hash(verifyToken, 10);
-                const verifyExpires = getIncrementDate(24);
-
                 const updatedUser = await UserModel.findByIdAndUpdate(
                   id,
                   {
                     email: data.email,
-                    isVerified: false,
-                    verifyToken: verifyTokenHash,
-                    verifyExpires,
                   },
                   { new: true }
                 );
