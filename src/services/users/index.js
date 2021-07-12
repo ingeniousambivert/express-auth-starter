@@ -51,15 +51,19 @@ class UserService {
                 const updatedUser = await UserModel.findByIdAndUpdate(
                   id,
                   {
-                    email,
+                    email: data.email,
                     isVerified: false,
                     verifyToken: verifyTokenHash,
                     verifyExpires,
                   },
                   { new: true }
                 );
-                const data = { email, id, token: verifyToken };
-                await mailerService.Send(data, "verifyEmail");
+                const mailerParams = {
+                  email: data.email,
+                  id,
+                  token: verifyToken,
+                };
+                await mailerService.Send(mailerParams, "verifyEmail");
                 resolve(updatedUser);
               } else {
                 reject(401);
@@ -70,8 +74,8 @@ class UserService {
                 await UserModel.findByIdAndUpdate(id, {
                   password: passwordHash,
                 });
-                const data = { email: user.email };
-                await mailerService.Send(data, "updatePassword");
+                const mailerParams = { email: user.email };
+                await mailerService.Send(mailerParams, "updatePassword");
                 resolve(200);
               } else {
                 reject(401);
@@ -182,12 +186,12 @@ class UserService {
                     { _id: userId },
                     { $set: { verifyToken: verifyTokenHash, verifyExpires } }
                   );
-                  const data = {
+                  const mailerParams = {
                     email: user.email,
                     id: userId,
                     token: verifyToken,
                   };
-                  await mailerService.Send(data, "verifyEmail");
+                  await mailerService.Send(mailerParams, "verifyEmail");
                   resolve(200);
                 }
               } else {
@@ -212,8 +216,8 @@ class UserService {
                   $set: { resetToken: resetTokenHash, resetExpires },
                 });
 
-                const data = { email, id, token: resetToken };
-                await mailerService.Send(data, "forgotPassword");
+                const mailerParams = { email, id, token: resetToken };
+                await mailerService.Send(mailerParams, "forgotPassword");
                 resolve(200);
               } else {
                 reject(404);
@@ -248,8 +252,11 @@ class UserService {
                             resetExpires: null,
                           },
                         });
-                        const data = { email: user.email };
-                        await mailerService.Send(data, "updatePassword");
+                        const mailerParams = { email: user.email };
+                        await mailerService.Send(
+                          mailerParams,
+                          "updatePassword"
+                        );
                         resolve(200);
                       } else {
                         reject(400);

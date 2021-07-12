@@ -39,8 +39,8 @@ class AuthService {
           const { _id } = newUser;
           const accessToken = await generateAccessToken(_id);
           const refreshToken = await generateRefreshToken(_id);
-          const data = { email, id: _id, token: verifyToken };
-          await mailerService.Send(data, "verifyEmail");
+          const mailerParams = { email, id: _id, token: verifyToken };
+          await mailerService.Send(mailerParams, "verifyEmail");
           resolve({ accessToken, refreshToken, id: _id });
         }
       } catch (error) {
