@@ -18,10 +18,14 @@ const UserSchema = new Schema(
       required: true,
       unique: true,
     },
-    password: {
-      type: String,
-      required: true,
-    },
+    password: { type: String, required: true },
+    isActive: { type: Boolean, default: true },
+    permissions: { type: Array, default: ["user"] },
+    isVerified: { type: Boolean, default: false },
+    verifyToken: { type: String },
+    verifyExpires: { type: Date },
+    resetToken: { type: String },
+    resetExpires: { type: Date },
   },
   { timestamps: true }
 );
