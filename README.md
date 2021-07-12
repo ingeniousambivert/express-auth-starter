@@ -38,23 +38,39 @@ npm run dev
    - Add the following lines to it (modify according to your environment/requirements)
 
    ```env
-   # Express Server config
-   PORT=8000
+      # Express Server config
+      PORT=8000
 
-   # MongoDB config
-   MONGO_URI=mongodb://127.0.0.1:27017/express-server
+      # API config
+      API_PREFIX=/api
 
-   # JWT config
-    # Do not use the sample string below, to get a hex string run: openssl rand -hex 32
-    ACCESS_TOKEN_SECRET=b970aded3f8731894204ea5cc127756b197925591281a2c7538660b99791b984
-    REFRESH_TOKEN_SECRET=f820f7853587aa1f1f75f4040750199825cc1cc7cf4a26bc95212423c76224ef
+      # MongoDB config
+      MONGO_PORT=27017
+      MONGO_HOST=127.0.0.1
+      MONGO_DATABASE=express-starter
+      # if any 
+      MONGO_USERNAME=
+      MONGO_PASSWORD=
 
-   # Node Mailer config
-      GMAIL_USERNAME=yourusername
-      GMAIL_PASSWORD=yourpassword
+      # Redis config
+      REDIS_PORT=6379
+      REDIS_HOST=127.0.0.1
+      # if any 
+      REDIS_PASSWORD=
 
-   # Client URL - For mails 
-    CLIENT_URL=http://127.0.0.1:3000
+      # JWT config
+      # Do not use the sample string below, to get a hex string run: openssl rand -hex 32
+      ACCESS_TOKEN_SECRET=b970aded3f8731894204ea5cc127756b197925591281a2c7538660b99791b984
+      REFRESH_TOKEN_SECRET=f820f7853587aa1f1f75f4040750199825cc1cc7cf4a26bc95212423c76224ef
+      EXPIRY_AFTER=1d
+
+      # Node Mailer config
+      GMAIL_USERNAME=your-username
+      GMAIL_PASSWORD=your-password
+
+      # Client URL - For mails 
+      CLIENT_URL=http://127.0.0.1:3000
+
    ```
 
    By default the *mailer* works with the [SMTP Transport](https://www.npmjs.com/package/nodemailer-smtp-transport) configured with Gmail. But you can use any supported [transports](https://nodemailer.com/transports/).
