@@ -57,7 +57,7 @@ class UserService {
                     verifyExpires,
                   },
                   { new: true }
-                );
+                ).select({ password: 0 });
                 const mailerParams = {
                   email: data.email,
                   id,
@@ -88,7 +88,7 @@ class UserService {
             ) {
               const updatedUser = await UserModel.findByIdAndUpdate(id, data, {
                 new: true,
-              });
+              }).select({ password: 0 });
               resolve(updatedUser);
             } else {
               reject(400);
