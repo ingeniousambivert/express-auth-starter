@@ -11,7 +11,7 @@ This project uses [Express](https://expressjs.com/). Fast, unopinionated, minima
 
 Getting up and running is simple.
 
-1. Make sure you have [NodeJS](https://nodejs.org/), [npm](https://www.npmjs.com/), [Redis](https://redis.io/) and [MongoDB](https://www.mongodb.com/) installed in your system globally.
+1. Make sure you have [NodeJS](https://nodejs.org/), [npm](https://www.npmjs.com/), [Redis](https://redis.io/) and [PostgreSQl](https://www.postgresql.org/) installed in your system globally.
 2. Install your dependencies.
 
 ```bash
@@ -43,13 +43,14 @@ npm run dev
       # API config
       API_PREFIX=/api
 
-      # MongoDB config
-      MONGO_PORT=27017
-      MONGO_HOST=127.0.0.1
-      MONGO_DATABASE=express-starter
-      # if any 
-      MONGO_USERNAME=your-username
-      MONGO_PASSWORD=your-password
+      # Sequelize config
+      SEQUELIZE_DIALECT=postgres
+
+      # PostgreSQL config
+      POSTGRES_DATABASE=express-starter
+      POSTGRES_USER=ingeniousambivert
+      # if any
+      POSTGRES_PASSWORD=
 
       # Redis config
       REDIS_PORT=6379
@@ -349,7 +350,7 @@ Status : 200 OK
 
 [NodeJS](https://nodejs.org)
 
-[MongoDB](https://www.mongodb.com/)
+[PostgreSQl](https://www.postgresql.org/)
 
 ## Help
 
