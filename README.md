@@ -19,7 +19,7 @@ Getting up and running is simple.
 cd path/to/server
 npm install
 ```
-
+****
 3.1 Start your server.
 
 ```bash
@@ -104,7 +104,7 @@ _reponse_ :
 }
 ```
 
-**POST** `/users/auth/signup`
+**POST** `/auth/signup`
 
 _request_ :
 
@@ -119,12 +119,16 @@ _request_ :
 
 _reponse_ :
 
-```js
-{ message: "Created User and sent verification email to monarch@maisuriya.com" }
 
+```js
+{
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0ZWxsZXItYmxvZyIsInN1YiI6IjYwY2M4MDNmZmY3YzFkMDE1MTEwYTc5YyIsImlzc2F0IjoxNjI0MDE5MDU1OTkxLCJpYXQiOjE2MjQwMTkwNTUsImV4cCI6MTYyNDEwNTQ1NX0.Mb1xxlBnonPvIL8Il7Q7gzwU0sq9S_LdCwOP6TUrfnw",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0ZWxsZXItYmxvZyIsInN1YiI6IjYwY2M4MDNmZmY3YzFkMDE1MTEwYTc5YyIsImlzc2F0IjoxNjI0MDE5MDU1OTk5LCJpYXQiOjE2MjQwMTkwNTUsImV4cCI6MTY1NTU3NjY1NX0.Tbquwy6dp8inhDge_2gcLj5RS3yHO4ynvgU5SfjhBoI",
+    "id": "60cc803fff7c1d015110a79c"
+}
 ```
 
-**POST** `/users/auth/signin`
+**POST** `/auth/signin`
 
 _request_ :
 
@@ -145,7 +149,7 @@ _reponse_ :
 }
 ```
 
-**POST** `/users/auth/refresh`
+**POST** `/auth/refresh`
 
 _request_ :
 
@@ -165,7 +169,7 @@ _reponse_ :
 }
 ```
 
-**DELETE** `/users/auth/signout`
+**DELETE** `/auth/signout`
 
 _request_ :
 
@@ -178,10 +182,10 @@ _request_ :
 _reponse_ :
 
 ```js
-Status : 204
+Status : 204 OK
 ```
 
-**POST** `/users/account/:type`
+**POST** `/users/:type`
 
 **Type :** _**verify-user**_
 
@@ -197,8 +201,7 @@ _request_ :
 _reponse_ :
 
 ```js
-{ message: "User has been succesfully verified" }
-
+Status : 200 OK
 ```
 
 **Type :** _**resend-verify**_
@@ -214,8 +217,7 @@ _request_ :
 _reponse_ :
 
 ```js
-{ message: "Resent verification email to monarch@maisuriya.com" }
-
+Status : 200 OK
 ```
 
 **Type :** _**forgot-password**_
@@ -231,8 +233,7 @@ _request_ :
 _reponse_ :
 
 ```js
-{ message: "Sent a reset password link to  monarch@maisuriya.com" }
-
+Status : 200 OK
 ```
 
 **Type :** _**reset-password**_
@@ -250,11 +251,10 @@ _request_ :
 _reponse_ :
 
 ```js
-{ message: "Password Reset Successfully" }
-
+Status : 200 OK
 ```
 
-**PATCH** `/users/update/data/:id`
+**PATCH** `/users/:id`
 
 _request_ :
 
@@ -284,7 +284,7 @@ _reponse_ :
 }
 ```
 
-**PATCH** `/users/update/password/:id`
+**PATCH** `/users/:id`
 
 _request_ :
 
@@ -295,17 +295,18 @@ _request_ :
 }
 
 body: {
-  "password":"newAndUpdatedPassword",
+  "currentPassword":"monarch",
+  "newPassword":"maisuriya"
 }
 ```
 
 _reponse_ :
 
 ```js
-{ message: "Successfully updated password" }
+Status : 200 OK
 ```
 
-**PATCH** `/users/update/email/:id`
+**PATCH** `/users/:id`
 
 _request_ :
 
@@ -316,26 +317,15 @@ _request_ :
 }
 
 body: {
-  "email":"monarch@maisuriya.com",
+ "email":"monarch@maisuriya.lol",
+  "password":"monarch@maisuriya.com"
 }
 ```
 
 _reponse_ :
 
 ```js
-{
-  "Sent verification email to monarch@maisuriya.com",
-  {
-    "_id": "6082d3318b2a795b31c07965",
-    "firstname":"Testing First Name",
-    "lastname":"Maisuriya",
-    "email":"monarch@maisuriya.com",
-    "password": "$2b$10$lW3lQ6SBhyM2g7BtPRw0suYLt7ohtMYI9Nr3MyxdnQ/Q/mGB/s61O",
-    "createdAt": "2021-04-23T14:01:21.654Z",
-    "updatedAt": "2021-04-23T14:01:21.654Z",
-    "__v": 0
-}
-}
+Status : 200 OK
 ```
 
 **DELETE** `/users/delete/:id`
@@ -352,7 +342,7 @@ _request_ :
 _reponse_ :
 
 ```js
-  { message: "Successfully deleted user"}
+Status : 200 OK
 ```
 
 ## Built with
