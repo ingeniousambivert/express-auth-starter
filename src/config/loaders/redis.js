@@ -1,17 +1,16 @@
 const redis = require("redis");
-const logger = require("../utils/logger");
+const logger = require("@helpers/logger");
+const { redisConnection } = require("@config");
 
-const client = redis.createClient({
-  port: 6379,
-  host: "127.0.0.1",
-});
+const client = redis.createClient(redisConnection);
 
 client.on("connect", () => {
   console.log("Redis client connected");
 });
 
 client.on("error", (error) => {
-  logger.error(`${error.message}`);
+  console.log("Redis client error");
+  logger.error("Redis Client", error);
 });
 
 client.on("end", () => {

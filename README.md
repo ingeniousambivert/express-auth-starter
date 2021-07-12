@@ -11,14 +11,14 @@ This project uses [Express](https://expressjs.com/). Fast, unopinionated, minima
 
 Getting up and running is simple.
 
-1. Make sure you have [NodeJS](https://nodejs.org/), [npm](https://www.npmjs.com/), [Redis](https://redis.io/) and [PostgreSQL](https://www.postgresql.org/) installed in your system globally.
+1. Make sure you have [NodeJS](https://nodejs.org/), [npm](https://www.npmjs.com/), [Redis](https://redis.io/) and [MongoDB](https://www.mongodb.com/) installed in your system globally.
 2. Install your dependencies.
 
 ```bash
 cd path/to/server
 npm install
 ```
-
+****
 3.1 Start your server.
 
 ```bash
@@ -37,27 +37,39 @@ npm run dev
    - Add the following lines to it (modify according to your environment/requirements)
 
    ```env
-   # Express Server config
-    PORT=8000
-    HOST=localhost
+      # Express Server config
+      PORT=8000
 
-   # PostgresSQL config
-    SEQUELIZE_DIALECT=postgres
-    POSTGRES_DATABASE=express-starter
-    POSTGRES_USER=username
-    POSTGRES_PASSWORD=password  # if any, or else leave empty
+      # API config
+      API_PREFIX=/api
 
-   # JWT config
-    # Do not use the sample string below, to get a hex string run: openssl rand -hex 32
-    ACCESS_TOKEN_SECRET=b970aded3f8731894204ea5cc127756b197925591281a2c7538660b99791b984
-    REFRESH_TOKEN_SECRET=f820f7853587aa1f1f75f4040750199825cc1cc7cf4a26bc95212423c76224ef
+      # MongoDB config
+      MONGO_PORT=27017
+      MONGO_HOST=127.0.0.1
+      MONGO_DATABASE=express-starter
+      # if any 
+      MONGO_USERNAME=your-username
+      MONGO_PASSWORD=your-password
 
-   # Node Mailer config
-      GMAIL_USERNAME=yourusername
-      GMAIL_PASSWORD=yourpassword
+      # Redis config
+      REDIS_PORT=6379
+      REDIS_HOST=127.0.0.1
+      # if any 
+      REDIS_PASSWORD=your-password
 
-   # Client URL - For mails 
-    CLIENT_URL=http://127.0.0.1:3000
+      # JWT config
+      # Do not use the sample string below, to get a hex string run: openssl rand -hex 32
+      ACCESS_TOKEN_SECRET=b970aded3f8731894204ea5cc127756b197925591281a2c7538660b99791b984
+      REFRESH_TOKEN_SECRET=f820f7853587aa1f1f75f4040750199825cc1cc7cf4a26bc95212423c76224ef
+      EXPIRY_AFTER=1d
+
+      # Node Mailer config
+      GMAIL_USERNAME=your-username
+      GMAIL_PASSWORD=your-password
+
+      # Client URL - For mails 
+      CLIENT_URL=http://127.0.0.1:3000
+
    ```
 
    By default the *mailer* works with the [SMTP Transport](https://www.npmjs.com/package/nodemailer-smtp-transport) configured with Gmail. But you can use any supported [transports](https://nodemailer.com/transports/).
@@ -81,7 +93,7 @@ _reponse_ :
 
 ```js
 {
-    "id": "6082d3318b2a795b31c07965",
+    "_id": "6082d3318b2a795b31c07965",
     "firstname":"Monarch",
     "lastname":"Maisuriya",
     "email":"monarch@maisuriya.com",
@@ -91,7 +103,7 @@ _reponse_ :
 }
 ```
 
-**POST** `/users/auth/signup`
+**POST** `/auth/signup`
 
 _request_ :
 
@@ -106,12 +118,16 @@ _request_ :
 
 _reponse_ :
 
-```js
-{ message: "Created User and sent verification email to monarch@maisuriya.com" }
 
+```js
+{
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0ZWxsZXItYmxvZyIsInN1YiI6IjYwY2M4MDNmZmY3YzFkMDE1MTEwYTc5YyIsImlzc2F0IjoxNjI0MDE5MDU1OTkxLCJpYXQiOjE2MjQwMTkwNTUsImV4cCI6MTYyNDEwNTQ1NX0.Mb1xxlBnonPvIL8Il7Q7gzwU0sq9S_LdCwOP6TUrfnw",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0ZWxsZXItYmxvZyIsInN1YiI6IjYwY2M4MDNmZmY3YzFkMDE1MTEwYTc5YyIsImlzc2F0IjoxNjI0MDE5MDU1OTk5LCJpYXQiOjE2MjQwMTkwNTUsImV4cCI6MTY1NTU3NjY1NX0.Tbquwy6dp8inhDge_2gcLj5RS3yHO4ynvgU5SfjhBoI",
+    "id": "60cc803fff7c1d015110a79c"
+}
 ```
 
-**POST** `/users/auth/signin`
+**POST** `/auth/signin`
 
 _request_ :
 
@@ -132,7 +148,7 @@ _reponse_ :
 }
 ```
 
-**POST** `/users/auth/refresh`
+**POST** `/auth/refresh`
 
 _request_ :
 
@@ -152,7 +168,7 @@ _reponse_ :
 }
 ```
 
-**DELETE** `/users/auth/signout`
+**DELETE** `/auth/signout`
 
 _request_ :
 
@@ -165,10 +181,10 @@ _request_ :
 _reponse_ :
 
 ```js
-Status : 204
+Status : 204 OK
 ```
 
-**POST** `/users/account/:type`
+**POST** `/users/:type`
 
 **Type :** _**verify-user**_
 
@@ -184,8 +200,7 @@ _request_ :
 _reponse_ :
 
 ```js
-{ message: "User has been succesfully verified" }
-
+Status : 200 OK
 ```
 
 **Type :** _**resend-verify**_
@@ -201,8 +216,7 @@ _request_ :
 _reponse_ :
 
 ```js
-{ message: "Resent verification email to monarch@maisuriya.com" }
-
+Status : 200 OK
 ```
 
 **Type :** _**forgot-password**_
@@ -218,8 +232,7 @@ _request_ :
 _reponse_ :
 
 ```js
-{ message: "Sent a reset password link to  monarch@maisuriya.com" }
-
+Status : 200 OK
 ```
 
 **Type :** _**reset-password**_
@@ -237,11 +250,10 @@ _request_ :
 _reponse_ :
 
 ```js
-{ message: "Password Reset Successfully" }
-
+Status : 200 OK
 ```
 
-**PATCH** `/users/update/data/:id`
+**PATCH** `/users/:id`
 
 _request_ :
 
@@ -260,18 +272,17 @@ _reponse_ :
 
 ```js
 {
-    "id": "6082d3318b2a795b31c07965",
+    "_id": "6082d3318b2a795b31c07965",
     "firstname":"Testing First Name",
     "lastname":"Maisuriya",
     "email":"maisuriya@monarch.com",
-    "password": "$2b$10$lW3lQ6SBhyM2g7BtPRw0suYLt7ohtMYI9Nr3MyxdnQ/Q/mGB/s61O",
     "createdAt": "2021-04-23T14:01:21.654Z",
     "updatedAt": "2021-04-23T14:01:21.654Z",
     "__v": 0
 }
 ```
 
-**PATCH** `/users/update/password/:id`
+**PATCH** `/users/:id`
 
 _request_ :
 
@@ -282,17 +293,18 @@ _request_ :
 }
 
 body: {
-  "password":"newAndUpdatedPassword",
+  "currentPassword":"monarch",
+  "newPassword":"maisuriya"
 }
 ```
 
 _reponse_ :
 
 ```js
-{ message: "Successfully updated password" }
+Status : 200 OK
 ```
 
-**PATCH** `/users/update/email/:id`
+**PATCH** `/users/:id`
 
 _request_ :
 
@@ -303,29 +315,18 @@ _request_ :
 }
 
 body: {
-  "email":"monarch@maisuriya.com",
+ "email":"monarch@maisuriya.lol",
+  "password":"monarch@maisuriya.com"
 }
 ```
 
 _reponse_ :
 
 ```js
-{
-  "Sent verification email to monarch@maisuriya.com",
-  {
-    "id": "6082d3318b2a795b31c07965",
-    "firstname":"Testing First Name",
-    "lastname":"Maisuriya",
-    "email":"monarch@maisuriya.com",
-    "password": "$2b$10$lW3lQ6SBhyM2g7BtPRw0suYLt7ohtMYI9Nr3MyxdnQ/Q/mGB/s61O",
-    "createdAt": "2021-04-23T14:01:21.654Z",
-    "updatedAt": "2021-04-23T14:01:21.654Z",
-    "__v": 0
-}
-}
+Status : 200 OK
 ```
 
-**DELETE** `/users/delete/:id`
+**DELETE** `/users/:id`
 
 _request_ :
 
@@ -339,7 +340,7 @@ _request_ :
 _reponse_ :
 
 ```js
-  { message: "Successfully deleted user"}
+Status : 200 OK
 ```
 
 ## Built with
@@ -348,7 +349,7 @@ _reponse_ :
 
 [NodeJS](https://nodejs.org)
 
-[PostgreSQL](https://www.postgresql.org/) 
+[MongoDB](https://www.mongodb.com/)
 
 ## Help
 

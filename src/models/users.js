@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
-const sequelize = require("../config/sequelize");
+const sequelizeORM = require("@config/loaders/sequelize");
 
-const UserModel = sequelize.define(
+const UserModel = sequelizeORM.define(
   "user",
   {
     id: {

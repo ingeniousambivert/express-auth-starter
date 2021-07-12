@@ -1,19 +1,26 @@
+require("module-alias/register");
+
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const requestLogger = require("morgan");
-require("./config/sequelize");
+const appRoutes = require("@api/routes");
+const { apiPrefix } = require("@config");
 
-const usersRouter = require("./routes/users");
+require("@config/loaders/sequelize");
 
 const app = express();
 
 app.use(requestLogger("dev"));
 app.use(express.json());
+app.enable("trust proxy");
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use("/api/users", usersRouter);
+app.get("/status", (req, res) => {
+  res.status(200).end();
+});
+app.use(apiPrefix, appRoutes());
 
 module.exports = app;
