@@ -197,7 +197,6 @@ _reponse_ :
     "firstname":"Testing First Name",
     "lastname":"Maisuriya",
     "email":"maisuriya@monarch.com",
-    "password": "$2b$10$lW3lQ6SBhyM2g7BtPRw0suYLt7ohtMYI9Nr3MyxdnQ/Q/mGB/s61O",
     "createdAt": "2021-04-23T14:01:21.654Z",
     "updatedAt": "2021-04-23T14:01:21.654Z",
     "__v": 0
