@@ -38,8 +38,9 @@ This project uses [Express](https://expressjs.com/). Fast, unopinionated, minima
 ## Todo
 
 - [X]  Authentication Management 
-- [ ]  Role Based Access Control
 - [ ]  Move to a Dependency Injection Approach - [Read More](https://softwareontheroad.com/ideal-nodejs-project-structure/#di)
+- [ ]  Add test cases for all the features
+- [ ]  Role Based Access Control
 - [ ]  ? Add Scheduled Jobs for email sequences 
 - [ ]  ? Add Events (Pub/Sub) for different sequences 
 
