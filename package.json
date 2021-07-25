@@ -10,6 +10,7 @@
     "@api": "./src/api",
     "@app": "./src/app.js",
     "@config": "./src/config",
+    "@events": "./src/events",
     "@helpers": "./src/helpers",
     "@models": "./src/models",
     "@root": "./src",
