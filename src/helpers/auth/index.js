@@ -17,7 +17,7 @@ const generateAccessToken = (userId) => {
     };
     JWT.sign(payload, accessSecret, options, (error, token) => {
       if (error) {
-        logger.error("generateAccessToken", error);
+        logger.error("helper:auth:generateAccessToken:", error);
         reject(error);
       }
       resolve(token);
@@ -33,7 +33,7 @@ const generateRefreshToken = (userId) => {
     };
     JWT.sign(payload, refreshSecret, options, (error, token) => {
       if (error) {
-        logger.error("generateRefreshToken", error);
+        logger.error("helper:auth:generateRefreshToken", error);
         reject(error);
       }
       redisClient.SET(
@@ -43,7 +43,7 @@ const generateRefreshToken = (userId) => {
         365 * 24 * 60 * 60,
         (error, reply) => {
           if (error) {
-            logger.error("generateRefreshToken", error);
+            logger.error("helper:auth:generateRefreshToken", error);
             reject(error);
           }
           resolve(token);
