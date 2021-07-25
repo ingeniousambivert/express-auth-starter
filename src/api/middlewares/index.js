@@ -18,7 +18,7 @@ passport.use(
           return done(null, user);
         })
         .catch((error) => {
-          logger.error("Passport Middleware", error);
+          logger.error("api:middlewares:passportJWT:", error);
           return done(error);
         });
     }
