@@ -1,15 +1,18 @@
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
-
-const logger = require("@helpers/logger");
-const UserModel = require("@models/users");
+const EventEmitter = require("events");
 const { isValidPassword, verifyAccessToken } = require("@helpers/auth");
 const MailerService = require("@services/mailer");
 const { getIncrementDate } = require("@utils");
 
 const mailerService = new MailerService();
 
-class UserService {
+class UserService extends EventEmitter {
+  constructor(UserModel) {
+    super();
+    this.UserModel = UserModel;
+  }
+
   async Get(params) {
     const { id, headerToken } = params;
     return new Promise(async (resolve, reject) => {
@@ -18,7 +21,7 @@ class UserService {
         if (!isTokenValid) {
           reject(403);
         } else {
-          const user = await UserModel.findById(id, { password: 0 });
+          const user = await this.UserModel.findById(id, { password: 0 });
           if (user) {
             resolve(user);
           } else {
@@ -26,7 +29,7 @@ class UserService {
           }
         }
       } catch (error) {
-        logger.error("UserService.Get", error);
+        this.emit("user:error", new Error(`service:user:get: ${error}`));
         reject(500);
       }
     });
@@ -40,7 +43,7 @@ class UserService {
         if (!isTokenValid) {
           reject(403);
         } else {
-          const user = await UserModel.findById(id);
+          const user = await this.UserModel.findById(id);
           if (user) {
             if (data.email && data.password) {
               if (await isValidPassword(data.password, user.password)) {
@@ -48,7 +51,7 @@ class UserService {
                 const verifyTokenHash = await bcrypt.hash(verifyToken, 10);
                 const verifyExpires = getIncrementDate(24);
 
-                const updatedUser = await UserModel.findByIdAndUpdate(
+                const updatedUser = await this.UserModel.findByIdAndUpdate(
                   id,
                   {
                     email: data.email,
@@ -71,7 +74,7 @@ class UserService {
             } else if (data.currentPassword && data.newPassword) {
               if (await isValidPassword(data.currentPassword, user.password)) {
                 const passwordHash = await bcrypt.hash(data.newPassword, 10);
-                await UserModel.findByIdAndUpdate(id, {
+                await this.UserModel.findByIdAndUpdate(id, {
                   password: passwordHash,
                 });
                 const mailerParams = { email: user.email };
@@ -86,9 +89,13 @@ class UserService {
               !data.currentPassword &&
               !data.newPassword
             ) {
-              const updatedUser = await UserModel.findByIdAndUpdate(id, data, {
-                new: true,
-              }).select({ password: 0 });
+              const updatedUser = await this.UserModel.findByIdAndUpdate(
+                id,
+                data,
+                {
+                  new: true,
+                }
+              ).select({ password: 0 });
               resolve(updatedUser);
             } else {
               reject(400);
@@ -98,7 +105,7 @@ class UserService {
           }
         }
       } catch (error) {
-        logger.error("UserService.Update", error);
+        this.emit("user:error", new Error(`service:user:update: ${error}`));
         reject(500);
       }
     });
@@ -112,16 +119,16 @@ class UserService {
         if (!isTokenValid) {
           reject(403);
         } else {
-          const user = await UserModel.findById(id);
+          const user = await this.UserModel.findById(id);
           if (user) {
-            await UserModel.findByIdAndDelete(id);
+            await this.UserModel.findByIdAndDelete(id);
             resolve(200);
           } else {
             reject(404);
           }
         }
       } catch (error) {
-        logger.error("UserService.Delete", error);
+        this.emit("user:error", new Error(`service:user:delete: ${error}`));
         reject(500);
       }
     });
@@ -135,7 +142,7 @@ class UserService {
         switch (type) {
           case "verify-user":
             try {
-              const user = await UserModel.findById(userId);
+              const user = await this.UserModel.findById(userId);
               if (user) {
                 if (user.verifyToken && user.verifyExpires) {
                   const isValid = await bcrypt.compare(token, user.verifyToken);
@@ -145,7 +152,7 @@ class UserService {
                     const now = Date.now();
                     const diff = user.verifyExpires - now;
                     if (diff > 0) {
-                      await UserModel.updateOne(
+                      await this.UserModel.updateOne(
                         { _id: userId },
                         {
                           $set: {
@@ -167,14 +174,17 @@ class UserService {
                 reject(404);
               }
             } catch (error) {
-              logger.error("UserService.Manage", error);
+              this.emit(
+                "user:error",
+                new Error(`service:user:verifyuser: ${error}`)
+              );
               reject(500);
             }
             break;
 
           case "resend-verify":
             try {
-              const user = await UserModel.findById(userId);
+              const user = await this.UserModel.findById(userId);
               if (user) {
                 if (user.isVerified === true) {
                   reject(400);
@@ -182,7 +192,7 @@ class UserService {
                   const verifyToken = crypto.randomBytes(32).toString("hex");
                   const verifyTokenHash = await bcrypt.hash(verifyToken, 10);
                   const verifyExpires = getIncrementDate(24);
-                  await UserModel.updateOne(
+                  await this.UserModel.updateOne(
                     { _id: userId },
                     { $set: { verifyToken: verifyTokenHash, verifyExpires } }
                   );
@@ -198,21 +208,24 @@ class UserService {
                 reject(404);
               }
             } catch (error) {
-              logger.error("UserService.Manage", error);
+              this.emit(
+                "user:error",
+                new Error(`service:user:resendverify: ${error}`)
+              );
               reject(500);
             }
             break;
 
           case "forgot-password":
             try {
-              const user = await UserModel.findOne({ email });
+              const user = await this.UserModel.findOne({ email });
               if (user) {
                 const id = user._id;
                 const resetToken = crypto.randomBytes(32).toString("hex");
                 const resetTokenHash = await bcrypt.hash(resetToken, 10);
                 const resetExpires = getIncrementDate(6);
 
-                await UserModel.findByIdAndUpdate(id, {
+                await this.UserModel.findByIdAndUpdate(id, {
                   $set: { resetToken: resetTokenHash, resetExpires },
                 });
 
@@ -223,7 +236,10 @@ class UserService {
                 reject(404);
               }
             } catch (error) {
-              logger.error("UserService.Manage", error);
+              this.emit(
+                "user:error",
+                new Error(`service:user:forgotpassword: ${error}`)
+              );
               reject(500);
             }
             break;
@@ -231,7 +247,7 @@ class UserService {
           case "reset-password":
             try {
               if (password) {
-                const user = await UserModel.findById(userId);
+                const user = await this.UserModel.findById(userId);
                 if (user) {
                   if (user.resetToken && user.resetExpires) {
                     const isValid = await bcrypt.compare(
@@ -245,7 +261,7 @@ class UserService {
                       const diff = user.resetExpires - now;
                       if (diff > 0) {
                         const passwordHash = await bcrypt.hash(password, 10);
-                        await UserModel.findByIdAndUpdate(userId, {
+                        await this.UserModel.findByIdAndUpdate(userId, {
                           $set: {
                             password: passwordHash,
                             resetToken: null,
@@ -272,7 +288,10 @@ class UserService {
                 reject(400);
               }
             } catch (error) {
-              logger.error("UserService.Manage", error);
+              this.emit(
+                "user:error",
+                new Error(`service:user:resetpassword: ${error}`)
+              );
               reject(500);
             }
             break;
@@ -282,7 +301,10 @@ class UserService {
             break;
         }
       } catch (error) {
-        logger.error("UserService.Manage", error);
+        this.emit(
+          "user:error",
+          new Error(`service:user:resetpassword: ${error}`)
+        );
         reject(500);
       }
     });

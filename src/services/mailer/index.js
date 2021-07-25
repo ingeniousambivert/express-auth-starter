@@ -18,8 +18,8 @@ class MailerService {
             await mailTransporter.sendMail(mailOptions);
             resolve(true);
           } catch (error) {
-            logger.error("MailerService.verifyEmail", error);
-            reject(false);
+            logger.error("service:mailer:verifyEmail:", error);
+            reject(error.message);
           }
           break;
         case "resetPassword":
@@ -29,8 +29,8 @@ class MailerService {
             await mailTransporter.sendMail(mailOptions);
             resolve(true);
           } catch (error) {
-            logger.error("MailerService.resetPassword", error);
-            reject(false);
+            logger.error("service:mailer:resetPassword:", error);
+            reject(error.message);
           }
           break;
         case "forgotPassword":
@@ -40,8 +40,8 @@ class MailerService {
             await mailTransporter.sendMail(mailOptions);
             resolve(true);
           } catch (error) {
-            logger.error("MailerService.forgotPassword", error);
-            reject(false);
+            logger.error("service:mailer:forgotPassword:", error);
+            reject(error.message);
           }
           break;
         case "updatePassword":
@@ -51,8 +51,8 @@ class MailerService {
             await mailTransporter.sendMail(mailOptions);
             resolve(true);
           } catch (error) {
-            logger.error("MailerService.updatePassword", error);
-            reject(false);
+            logger.error("service:mailer:updatePassword:", error);
+            reject(error.message);
           }
           break;
 

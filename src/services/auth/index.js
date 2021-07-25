@@ -1,25 +1,26 @@
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
-const logger = require("@helpers/logger");
-const UserModel = require("@models/users");
+const EventEmitter = require("events");
 const {
   generateAccessToken,
   generateRefreshToken,
   isValidPassword,
   verifyRefreshToken,
 } = require("@helpers/auth");
-const MailerService = require("@services/mailer");
 const redisClient = require("@config/loaders/redis");
 const { getIncrementDate } = require("@utils");
 
-const mailerService = new MailerService();
+class AuthService extends EventEmitter {
+  constructor(UserModel) {
+    super();
+    this.UserModel = UserModel;
+  }
 
-class AuthService {
   async Signup(params) {
     const { firstname, lastname, email, password } = params;
     return new Promise(async (resolve, reject) => {
       try {
-        const foundUser = await UserModel.findOne({ email });
+        const foundUser = await this.UserModel.findOne({ email });
         if (foundUser) {
           reject(409);
         } else {
@@ -27,7 +28,7 @@ class AuthService {
           const verifyTokenHash = await bcrypt.hash(verifyToken, 10);
           const verifyExpires = getIncrementDate(24);
 
-          const newUser = new UserModel({
+          const newUser = new this.UserModel({
             firstname,
             lastname,
             email,
@@ -39,12 +40,18 @@ class AuthService {
           const { _id } = newUser;
           const accessToken = await generateAccessToken(_id);
           const refreshToken = await generateRefreshToken(_id);
-          const mailerParams = { email, id: _id, token: verifyToken };
-          await mailerService.Send(mailerParams, "verifyEmail");
+          const eventParams = {
+            email,
+            id: _id,
+            token: verifyToken,
+            type: "verifyEmail",
+          };
+
+          this.emit("auth:signup", eventParams);
           resolve({ accessToken, refreshToken, id: _id });
         }
       } catch (error) {
-        logger.error("AuthService.Signup", error);
+        this.emit("auth:error", new Error(`service:auth:signup: ${error}`));
         reject(500);
       }
     });
@@ -54,12 +61,13 @@ class AuthService {
     const { email, password } = params;
     return new Promise(async (resolve, reject) => {
       try {
-        const user = await UserModel.findOne({ email });
+        const user = await this.UserModel.findOne({ email });
         if (user) {
           if (await isValidPassword(password, user.password)) {
             const { _id } = user;
             const accessToken = await generateAccessToken(_id);
             const refreshToken = await generateRefreshToken(_id);
+            this.emit("auth:signin", _id);
             resolve({ accessToken, refreshToken, id: _id });
           } else {
             reject(401);
@@ -68,7 +76,7 @@ class AuthService {
           reject(401);
         }
       } catch (error) {
-        logger.error("AuthService.Signin", error);
+        this.emit("auth:error", new Error(`service:auth:signin: ${error}`));
         reject(500);
       }
     });
@@ -87,7 +95,7 @@ class AuthService {
           resolve({ accessToken, refreshToken: newRefreshToken, id });
         }
       } catch (error) {
-        logger.error("AuthService.Refresh", error);
+        this.emit("auth:error", new Error(`service:auth:refresh: ${error}`));
         reject(500);
       }
     });
@@ -105,7 +113,7 @@ class AuthService {
           resolve(204);
         }
       } catch (error) {
-        logger.error("AuthService.Revoke", error);
+        this.emit("auth:error", new Error(`service:auth:revoke: ${error}`));
         reject(500);
       }
     });
