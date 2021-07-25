@@ -14,7 +14,7 @@ mongoose.connection.on("connected", () => {
 });
 
 mongoose.connection.on("error", (error) => {
-  logger.error("Mongoose Client", error);
+  logger.error("loaders:mongoose:", error);
 });
 
 mongoose.connection.on("disconnected", () => {

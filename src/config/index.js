@@ -24,6 +24,9 @@ const {
 
 assert(ACCESS_TOKEN_SECRET, "ACCESS_TOKEN_SECRET is required");
 assert(REFRESH_TOKEN_SECRET, "REFRESH_TOKEN_SECRET is required");
+assert(GMAIL_USERNAME, "GMAIL_USERNAME is required");
+assert(GMAIL_PASSWORD, "GMAIL_PASSWORD is required");
+assert(CLIENT_URL, "CLIENT_URL is required");
 
 if (!PORT) {
   PORT = 8000;

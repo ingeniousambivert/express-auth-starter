@@ -10,7 +10,7 @@ client.on("connect", () => {
 
 client.on("error", (error) => {
   console.log("Redis client error");
-  logger.error("Redis Client", error);
+  logger.error("loaders:redis:", error);
 });
 
 client.on("end", () => {
