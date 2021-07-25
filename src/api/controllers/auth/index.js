@@ -1,37 +1,11 @@
 const createError = require("http-errors");
-const logger = require("@helpers/logger");
 const UserModel = require("@models/users");
 const AuthService = require("@services/auth");
-const MailerService = require("@services/mailer");
+const initListeners = require("@api/controllers/auth/listeners");
 
 const authService = new AuthService(UserModel);
-const mailerService = new MailerService();
 
-authService.on("auth:signup", async (params) => {
-  try {
-    const { email, id, token, type } = params;
-    await mailerService.Send({ email, id, token }, type);
-  } catch (error) {
-    logger.error(`events:auth:signup: ${error}`);
-  }
-});
-
-authService.on("auth:signin", async (params) => {
-  try {
-    const id = params;
-    await UserModel.findByIdAndUpdate(
-      id,
-      { lastLogin: new Date() },
-      { new: true }
-    );
-  } catch (error) {
-    logger.error(`events:auth:signin: ${error}`);
-  }
-});
-
-authService.on("auth:error", async (error) => {
-  logger.error(`events:auth:error: ${error}`);
-});
+initListeners(authService);
 
 async function SignupUser(req, res) {
   try {

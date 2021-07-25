@@ -2,12 +2,11 @@ const createError = require("http-errors");
 const UserModel = require("@models/users");
 const UserService = require("@services/users");
 const { getTokenFromHeader } = require("@helpers/auth");
+const initListeners = require("@api/controllers/users/listeners");
 
 const userService = new UserService(UserModel);
 
-userService.on("user.error", async (error) => {
-  logger.error(`events:user:user.error: ${error}`);
-});
+initListeners(userService);
 
 async function GetUser(req, res) {
   try {
