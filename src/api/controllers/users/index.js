@@ -1,8 +1,13 @@
 const createError = require("http-errors");
+const UserModel = require("@models/users");
 const UserService = require("@services/users");
 const { getTokenFromHeader } = require("@helpers/auth");
 
-const userService = new UserService();
+const userService = new UserService(UserModel);
+
+userService.on("user.error", async (error) => {
+  logger.error(`events:user:user.error: ${error}`);
+});
 
 async function GetUser(req, res) {
   try {
