@@ -20,6 +20,7 @@ const UserSchema = new Schema(
     },
     password: { type: String, required: true },
     isActive: { type: Boolean, default: true },
+    lastLogin: { type: Date, default: null },
     permissions: { type: Array, default: ["user"] },
     isVerified: { type: Boolean, default: false },
     verifyToken: { type: String },
