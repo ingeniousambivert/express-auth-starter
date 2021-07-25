@@ -1,11 +1,8 @@
 const logger = require("@helpers/logger");
-const UserModel = require("@models/users");
 const MailerService = require("@services/mailer");
 const mailerService = new MailerService();
 
-module.exports = (options) => {
-  const authService = options;
-
+module.exports = (authService, UserModel) => {
   authService.on("auth:signup", async (params) => {
     try {
       const { email, id, token, type } = params;

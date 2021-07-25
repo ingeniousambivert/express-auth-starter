@@ -5,7 +5,7 @@ const initListeners = require("@api/controllers/auth/listeners");
 
 const authService = new AuthService(UserModel);
 
-initListeners(authService);
+initListeners(authService, UserModel);
 
 async function SignupUser(req, res) {
   try {
